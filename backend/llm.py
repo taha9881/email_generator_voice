@@ -8,6 +8,12 @@ llm = ChatOllama(
         temperature=0.5
     )
 
+<<<<<<< HEAD
+=======
+#get today's date in dd-mm-yyyy format
+
+
+>>>>>>> 2a1f060 (init commit)
 
 def get_response(unstructured_details: str) :
     today_date = datetime.datetime.now().strftime("%d-%m-%Y")
@@ -69,6 +75,7 @@ def get_response(unstructured_details: str) :
     "unstructured_details": unstructured_details,
     'today_date': today_date
     })
+<<<<<<< HEAD
 
 def get_response_general(unstructured_details: str) :
     today_date = datetime.datetime.now().strftime("%d-%m-%Y")
@@ -110,3 +117,5 @@ def get_response_general(unstructured_details: str) :
     "unstructured_details": unstructured_details,
     'today_date': today_date
     })
+=======
+>>>>>>> 2a1f060 (init commit)

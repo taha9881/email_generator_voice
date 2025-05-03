@@ -1,12 +1,24 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+<<<<<<< HEAD
 import pywhisper
 from auth import get_access_token, build_msal_app, save_tokens, SCOPE, REDIRECT_URI
 import re
 
 from llm import get_response, get_response_general
 from email_utils import send_email
+=======
+import io
+import json
+import soundfile as sf
+import pywhisper
+from auth import get_access_token, build_msal_app, save_tokens, SCOPE, REDIRECT_URI
+
+from llm import get_response
+from email_utils import send_email
+from auth import get_access_token
+>>>>>>> 2a1f060 (init commit)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
@@ -40,6 +52,7 @@ def generate():
     content = request.json.get("text", "")
     if not content:
         return jsonify({"error": "No input text provided"}), 400
+<<<<<<< HEAD
     ai_response = get_response_general(content)
     # Extract Subject and Body using regex
     subject_match = re.search(r"Subject:\s*(.+)", ai_response)
@@ -65,6 +78,23 @@ def mail():
         to_email=data.get("to_email"),
         cc_email=data.get("cc_email"),
         subject=data.get("subject", "Daily Status Report"),
+=======
+    ai_response = get_response(content)
+    return jsonify({"response": ai_response})
+
+@app.route('/send-mail', methods=['POST'])
+def mail():
+    # ==== CONFIGURATION ====
+    with open("cred.json") as f:
+        config = json.load(f)
+    data = request.json
+    token = get_access_token()
+    send_email(
+        access_token=token,
+        to_email=config.get("to_mail"),
+        cc_email=config.get("cc_mail"),
+        subject= "Daily Status Report",
+>>>>>>> 2a1f060 (init commit)
         body=data["body"]
     )
     return jsonify({"status": "sent"})
