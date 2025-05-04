@@ -12,11 +12,8 @@ dist
 dist-ssr
 *.local
 
-<<<<<<< HEAD
 backend/cred.json
 
-=======
->>>>>>> 2a1f060 (init commit)
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
