@@ -54,10 +54,6 @@ def get_access_token():
     flow = app.initiate_device_flow(scopes=SCOPE)
     if "user_code" not in flow:
         raise ValueError("Failed to create device flow")
-<<<<<<< HEAD
-=======
-    print(flow["message"])  # Shows URL and code for user to enter
->>>>>>> 2a1f060 (init commit)
     result = app.acquire_token_by_device_flow(flow)
 
     if "access_token" in result:

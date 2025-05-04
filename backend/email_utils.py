@@ -10,16 +10,7 @@ def send_email(access_token, to_email,cc_email, subject, body):
             "subject": subject,
             "body": {
                 "contentType": "Text",
-<<<<<<< HEAD
                 "content": f"""{body}"""
-=======
-                "content": f"""{body}
-                Thanks & Regards,
-                Taha Boringwala
-                Data Science | BugendaiTech
-                Ph: 9518798331
-            """
->>>>>>> 2a1f060 (init commit)
             },
             "toRecipients": [
                 {
@@ -44,14 +35,6 @@ def send_email(access_token, to_email,cc_email, subject, body):
         headers=headers, 
         json=email_msg
     )
-<<<<<<< HEAD
-=======
-    print("Response Headers:")
-    print(headers)
-    print("Response Body:")
-    print(response.status_code)
-    print(response.text)
->>>>>>> 2a1f060 (init commit)
 
     if response.status_code == 202:
         print("Email sent successfully!")
