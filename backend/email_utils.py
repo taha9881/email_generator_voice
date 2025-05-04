@@ -10,12 +10,7 @@ def send_email(access_token, to_email,cc_email, subject, body):
             "subject": subject,
             "body": {
                 "contentType": "Text",
-                "content": f"""{body}
-                Thanks & Regards,
-                Taha Boringwala
-                Data Science | BugendaiTech
-                Ph: 9518798331
-            """
+                "content": f"""{body}"""
             },
             "toRecipients": [
                 {
@@ -40,11 +35,6 @@ def send_email(access_token, to_email,cc_email, subject, body):
         headers=headers, 
         json=email_msg
     )
-    print("Response Headers:")
-    print(headers)
-    print("Response Body:")
-    print(response.status_code)
-    print(response.text)
 
     if response.status_code == 202:
         print("Email sent successfully!")

@@ -8,9 +8,6 @@ llm = ChatOllama(
         temperature=0.5
     )
 
-#get today's date in dd-mm-yyyy format
-
-
 
 def get_response(unstructured_details: str) :
     today_date = datetime.datetime.now().strftime("%d-%m-%Y")
@@ -58,6 +55,47 @@ def get_response(unstructured_details: str) :
     <list of tasks for each project name in the format: 
         1. Project Name - Task 1
         2. Project Name -  Task 2, ...>
+    """
+
+    prompt = ChatPromptTemplate.from_template(template)
+
+    chain = (
+    prompt
+    | llm
+    | StrOutputParser()
+    )
+
+    return chain.invoke({
+    "unstructured_details": unstructured_details,
+    'today_date': today_date
+    })
+
+def get_response_general(unstructured_details: str) :
+    today_date = datetime.datetime.now().strftime("%d-%m-%Y")
+    
+    template = """
+    You are an advanced language model capable of detecting the type of email required based on user input. Your task is to analyze the provided description and determine whether the email should be professional or casual. Once identified, compose a clear, concise, and on-point email that aligns with the identified tone. 
+
+    Follow these steps:
+
+    1. Read the user's description carefully.
+    2. Identify key indicators that suggest the tone of the email (e.g., formality of language, context, and recipient's relationship).
+    3. Determine if the email should be categorized as "professional" or "casual."
+    4. Write the email accordingly, ensuring it is:
+    - Clear: Use straightforward language and avoid jargon.
+    - Concise: Keep the email brief and to the point, focusing on the main message.
+    - Appropriate: Match the tone and style to the identified category (professional or casual).
+    5. Only provide me actual email content nothing else.
+    6. Do not include any extra lines or spaces in the output.
+    7. if required, use the current date as {today_date} in the email. otherwise, do not include the date in the email. Use the date to make any calculations if required.
+    8. structure of output should be like:
+    Subject: <subject of the email>
+    Body: <body of the email>
+
+
+    For example, if the input is: "I need to invite my friend to a birthday party," the output should be a casual email. If the input is: "I need to request a meeting with my supervisor regarding project updates," the output should be a professional email.
+
+    Begin by analyzing the following user input: {unstructured_details}
     """
 
     prompt = ChatPromptTemplate.from_template(template)

@@ -1,15 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-import io
-import json
-import soundfile as sf
 import pywhisper
 from auth import get_access_token, build_msal_app, save_tokens, SCOPE, REDIRECT_URI
+import re
 
-from llm import get_response
+from llm import get_response, get_response_general
 from email_utils import send_email
-from auth import get_access_token
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
@@ -43,21 +40,31 @@ def generate():
     content = request.json.get("text", "")
     if not content:
         return jsonify({"error": "No input text provided"}), 400
-    ai_response = get_response(content)
-    return jsonify({"response": ai_response})
+    ai_response = get_response_general(content)
+    # Extract Subject and Body using regex
+    subject_match = re.search(r"Subject:\s*(.+)", ai_response)
+    body_match = re.search(r"Body:\s*(.+)", ai_response, re.DOTALL)
+
+    # Prepare JSON object
+    email_json = {
+        "Subject": subject_match.group(1).strip() if subject_match else "",
+        "Body": body_match.group(1).strip() if body_match else ""
+    }
+    return jsonify({"response": email_json})
 
 @app.route('/send-mail', methods=['POST'])
 def mail():
-    # ==== CONFIGURATION ====
-    with open("cred.json") as f:
-        config = json.load(f)
     data = request.json
-    token = get_access_token()
+    token = data.get("access_token")
+    if not token:
+        token = get_access_token()
+        if not token:
+            return jsonify({"error": "Not authenticated"}), 401
     send_email(
         access_token=token,
-        to_email=config.get("to_mail"),
-        cc_email=config.get("cc_mail"),
-        subject= "Daily Status Report",
+        to_email=data.get("to_email"),
+        cc_email=data.get("cc_email"),
+        subject=data.get("subject", "Daily Status Report"),
         body=data["body"]
     )
     return jsonify({"status": "sent"})
