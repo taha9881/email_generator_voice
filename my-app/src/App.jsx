@@ -2,16 +2,10 @@
 import React, { useState, useRef } from 'react';
 import { useEffect } from 'react';
 
-<<<<<<< HEAD
 function App() {
   const apiUrl = import.meta.env.VITE_APP_BASE_URL;
   console.log('API URL:', apiUrl);
 
-=======
-
-
-function App() {
->>>>>>> 2a1f060 (init commit)
   const [recording, setRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [email, setEmail] = useState('');
@@ -22,19 +16,15 @@ function App() {
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(null);
   const animationIdRef = useRef(null);
-<<<<<<< HEAD
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access_token'));
   const [toEmail, setToEmail] = useState(localStorage.getItem('toEmail') || '');
   const [ccEmail, setCcEmail] = useState(localStorage.getItem('ccEmail') || '');
   const [subject, setSubject] = useState('');
   const hasHandledAuth = useRef(false);
-=======
->>>>>>> 2a1f060 (init commit)
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       const url = window.location.href;
-<<<<<<< HEAD
 
       if (hasHandledAuth.current || !url.includes('code=')) return;
       hasHandledAuth.current = true;
@@ -61,34 +51,6 @@ function App() {
         alert('Login processing failed.');
       }
     };
-=======
-  
-      if (url.includes('code=')) {
-        try {
-          const res = await fetch('http://localhost:5001/auth-callback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url }),
-          });
-  
-          const data = await res.json();
-  
-          if (data.access_token) {
-            localStorage.setItem('access_token', data.access_token);
-            alert('Login successful!');
-            // Remove code from URL to avoid re-triggering
-            window.history.replaceState({}, document.title, '/');
-          } else {
-            alert('Login failed: ' + data.error);
-          }
-        } catch (err) {
-          console.error('Auth callback error:', err);
-          alert('Login processing failed.');
-        }
-      }
-    };
-  
->>>>>>> 2a1f060 (init commit)
     handleAuthCallback();
   }, []);
   
@@ -109,11 +71,6 @@ function App() {
       analyserRef.current.fftSize = 2048;
       const bufferLength = analyserRef.current.fftSize;
       dataArrayRef.current = new Uint8Array(bufferLength);
-<<<<<<< HEAD
-
-=======
-      drawWaveform();
->>>>>>> 2a1f060 (init commit)
 
       mediaRecorderRef.current.ondataavailable = (e) => {
         audioChunks.current.push(e.data);
@@ -121,7 +78,6 @@ function App() {
       mediaRecorderRef.current.onstop = () => handleStop(stream);
       mediaRecorderRef.current.start();
     } else {
-<<<<<<< HEAD
       // Stop recording
       setRecording(false);
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
@@ -130,57 +86,6 @@ function App() {
     }
   };
 
-=======
-      setRecording(false);
-      mediaRecorderRef.current.stop();
-    }
-  };
-
-  const drawWaveform = () => {
-    const canvas = canvasRef.current;
-    const canvasCtx = canvas.getContext('2d');
-    const analyser = analyserRef.current;
-    const dataArray = dataArrayRef.current;
-
-    const draw = () => {
-      animationIdRef.current = requestAnimationFrame(draw);
-      analyser.getByteTimeDomainData(dataArray);
-
-      canvasCtx.fillStyle = 'rgba(17, 24, 39, 0.2)';
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-      canvasCtx.lineWidth = 2;
-      canvasCtx.strokeStyle = '#c084fc'; // theme purple
-      canvasCtx.shadowColor = '#c084fc';
-      canvasCtx.shadowBlur = 10;
-
-      canvasCtx.beginPath();
-
-
-      const sliceWidth = canvas.width * 1.0 / dataArray.length;
-      let x = 0;
-
-      for (let i = 0; i < dataArray.length; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = v * canvas.height / 2;
-
-        if (i === 0) {
-          canvasCtx.moveTo(x, y);
-        } else {
-          canvasCtx.lineTo(x, y);
-        }
-
-        x += sliceWidth;
-      }
-
-      canvasCtx.lineTo(canvas.width, canvas.height / 2);
-      canvasCtx.stroke();
-    };
-
-    draw();
-  };
-
->>>>>>> 2a1f060 (init commit)
   const handleStop = async (stream) => {
     // Stop media tracks
     stream.getTracks().forEach(track => track.stop());
@@ -195,22 +100,14 @@ function App() {
     const formData = new FormData();
     formData.append('audio', audioBlob, 'recording.webm');
 
-<<<<<<< HEAD
     const transcriptRes = await fetch(`${apiUrl}/transcribe`, {
-=======
-    const transcriptRes = await fetch('http://localhost:5001/transcribe', {
->>>>>>> 2a1f060 (init commit)
       method: 'POST',
       body: formData,
     });
     const transcriptData = await transcriptRes.json();
     setTranscript(transcriptData.text);
 
-<<<<<<< HEAD
     const llmRes = await fetch(`${apiUrl}/generate`, {
-=======
-    const llmRes = await fetch('http://localhost:5001/generate', {
->>>>>>> 2a1f060 (init commit)
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -218,27 +115,18 @@ function App() {
       body: JSON.stringify({ text: transcriptData.text }),
     });
     const llmData = await llmRes.json();
-<<<<<<< HEAD
     setEmail(llmData.response.Body);
     setSubject(llmData.response.Subject);
   };
 
   const handleLogin = async () => {
     const res = await fetch(`${apiUrl}/auth-url`);
-=======
-    setEmail(llmData.response);
-  };
-
-  const handleLogin = async () => {
-    const res = await fetch('http://localhost:5001/auth-url');
->>>>>>> 2a1f060 (init commit)
     const data = await res.json();
     window.location.href = data.auth_url; // Redirect to Microsoft login
   };
   
   const handleSendEmail = async () => {
     try {
-<<<<<<< HEAD
       const response = await fetch(`${apiUrl}/send-mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -381,95 +269,3 @@ function App() {
   }
 
   export default App;
-=======
-      const res = await fetch('http://localhost:5001/send-mail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ body: email }),
-      });
-  
-      const result = await res.json();
-      if (result.status === 'sent') {
-        alert('📨 Email sent successfully!');
-      } else {
-        alert('❌ Failed to send email.');
-      }
-    } catch (error) {
-      console.error('Send email error:', error);
-      alert('❌ Error sending email.');
-    }
-  };
-  
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 text-white flex items-center justify-center px-4 py-8 font-sans">
-      <div className="w-full max-w-6xl glass rounded-3xl p-8 shadow-2xl">
-        <h1 className="text-4xl font-bold text-center mb-6">🎙️ Voice Email Generator</h1>
-
-        <p className="text-center text-sm mb-8 text-purple-200">
-          Click the button to start recording your voice. Once done, your speech will be transcribed and converted into an editable email draft.
-        </p>
-        <button
-          onClick={handleLogin}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
-        >
-          🔐 Login with Microsoft
-        </button>
-
-
-        <div className="flex justify-center mb-6">
-          <button
-            onClick={handleRecord}
-            className={`transition-all duration-300 text-lg ${
-              recording ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
-            } text-white px-8 py-3 rounded-full shadow-lg`}
-          >
-            {recording ? '🔴 Stop Recording' : '🎤 Record Audio'}
-          </button>
-        </div>
-
-        {recording && (
-          <div className="flex justify-center mb-6">
-            <canvas ref={canvasRef} width="600" height="100" className="w-full max-w-2xl rounded-md" />
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4">
-            <h2 className="text-lg font-semibold mb-2">📝 Transcript</h2>
-            <textarea
-              value={transcript}
-              onChange={(e) => setTranscript(e.target.value)}
-              className="w-full h-64 p-3 rounded text-sm text-white bg-transparent border border-white/20 resize-none outline-none"
-              placeholder="Transcript will appear here..."
-            />
-          </div>
-
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4">
-            <h2 className="text-lg font-semibold mb-2">📧 Generated Email</h2>
-            <textarea
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-64 p-3 rounded text-sm text-white bg-transparent border border-white/20 resize-none outline-none"
-              placeholder="Generated email will appear here..."
-            />
-            <div className="mt-4 text-right">
-              <button
-                onClick={handleSendEmail}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded shadow"
-              >
-                📤 Send Email
-              </button>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default App;
->>>>>>> 2a1f060 (init commit)
