@@ -4,3 +4,4 @@ soundfile
 pywhisper
 requests
 msal
+psycopg2-binary
