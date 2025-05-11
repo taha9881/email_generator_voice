@@ -1,5 +1,5 @@
 
-# Voice Email Generator
+# Voice2Email
 
 This project is a **voice-based email generator** that transcribes audio input, generates email content using AI, and sends emails via the Microsoft Graph API. It consists of a **React frontend** and a **Flask backend**.
 
